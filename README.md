@@ -1,4 +1,4 @@
-# co5fd4991acd2a6ded9358bb4
+# Tenzies game
 
 Quick start:
 
