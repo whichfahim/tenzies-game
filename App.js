@@ -2,11 +2,31 @@ import React from "react"
 import Die from "./Die"
 import {nanoid} from "nanoid"
 import Confetti from "react-confetti"
+import Score from "./Score"
 
 export default function App() {
-
+    
+    React.useEffect( ()=> {
+        // window.localStorage.removeItem("leastRolls")
+        //on first render, set localstorage item "leastRolls" to Number(99)
+        window.localStorage.setItem("leastRolls", JSON.stringify(99)) 
+        
+        // console.log(typeof JSON.parse(localStorage.getItem("leastRolls")))
+    },[])
+    
+    const [leastRolls, setLeastRolls] = React.useState(JSON.parse(window.localStorage.getItem("leastRolls")))
     const [dice, setDice] = React.useState(allNewDice())
     const [tenzies, setTenzies] = React.useState(false)
+    const [rollsCount, setRollsCount] = React.useState(0)
+    
+     React.useEffect( ()=> {
+        //console.log(leastRolls)
+        window.localStorage.setItem("leastRolls", JSON.stringify(leastRolls))
+    }, [leastRolls])
+    
+    console.log(`localStorage val = ${JSON.parse(window.localStorage.getItem("leastRolls"))}`)
+    // console.log(leastRolls)
+    console.log(`leastRolls = ${leastRolls}`)
     
     React.useEffect(() => {
         const allHeld = dice.every(die => die.isHeld)
@@ -16,7 +36,7 @@ export default function App() {
             setTenzies(true)
         }
     }, [dice])
-
+    
     function generateNewDie() {
         return {
             value: Math.ceil(Math.random() * 6),
@@ -33,11 +53,6 @@ export default function App() {
         return newDice
     }
     
-/**
- * Challenge: Allow the user to play a new game when the
- * button is clicked and they've already won
- */
-    
     function rollDice() {
         if(!tenzies) {
             setDice(oldDice => oldDice.map(die => {
@@ -45,9 +60,19 @@ export default function App() {
                     die :
                     generateNewDie()
             }))
+            setRollsCount(rollsCount => rollsCount += 1)  
+            // rollsCount += 1          
         } else {
-            setTenzies(false)
+            if (rollsCount < leastRolls){
+                setLeastRolls(rollsCount)
+                //console.log(window.localStorage.getItem("leastRolls"))
+                //console.log(leastRolls)
+            }
+            setRollsCount(0)
             setDice(allNewDice())
+            
+
+            setTenzies(false)             
         }
     }
     
@@ -67,7 +92,8 @@ export default function App() {
             holdDice={() => holdDice(die.id)}
         />
     ))
-    
+     
+
     return (
         <main>
             {tenzies && <Confetti />}
@@ -83,6 +109,9 @@ export default function App() {
             >
                 {tenzies ? "New Game" : "Roll"}
             </button>
+            <Score 
+                rolls={rollsCount}
+                leastRolls={leastRolls}/>
         </main>
     )
 }
