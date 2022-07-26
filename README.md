@@ -1,4 +1,10 @@
-# co9f54005b9c0e440ef76da2a
+# Tenzies game
+
+Match all 10 dice. Hold the dice you want to keep and roll the rest of the dice until all 10 dice show the same face in order to win the game. 
+
+### Latest features:
+- Added a score tracker
+- Save the highest score (least number of rolls) to local storage. 
 
 Quick start:
 
